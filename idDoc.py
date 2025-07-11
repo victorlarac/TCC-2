@@ -13,13 +13,13 @@ logging.basicConfig(
     level=logging.INFO,
     format=log_format,
     handlers=[
-        logging.FileHandler("violations_log.txt", mode='w', encoding='utf-8'),
+        logging.FileHandler("log_ex.txt", mode='w', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
 
 class IDDocHTMLValidator:
-    def __init__(self, base_url, start_id=1001, end_id=1600):
+    def __init__(self, base_url, start_id=503632, end_id=503892):
         self.base_url = base_url
         self.start_id = start_id
         self.end_id = end_id
@@ -95,7 +95,6 @@ class IDDocHTMLValidator:
                                 logging.error(f"[{iddoc}] ❌ Associação sensível confirmada.")
                                 if url not in self.violations_level3:
                                     self.violations_level3.append(url)
-                                # Evitar duplicação: remove se já classificou como nível 3
                                 if url in self.violations_level1:
                                     self.violations_level1.remove(url)
                                 if url in self.violations_level2:
@@ -158,17 +157,17 @@ class IDDocHTMLValidator:
         return has_kw or has_email
 
     def report_results(self):
-        print("\n🔴 [Nível 3] Violações críticas com associação a algum tipo de pessoa:")
+        logging.error("\n🔴 [Nível 3] Violações críticas com associação a algum tipo de pessoa:")
         for link in self.violations_level3:
-            print(link)
+            logging.error(link)
 
-        print("\n🟠 [Nível 2] Expressões com contexto de documento:")
+        logging.warning("\n🟠 [Nível 2] Expressões com contexto de documento:")
         for link in self.violations_level2:
-            print(link)
+            logging.warning(link)
 
-        print("\n🟡 [Nível 1] Expressões numéricas sensíveis detectadas:")
+        logging.info("\n🟡 [Nível 1] Expressões numéricas sensíveis detectadas:")
         for link in self.violations_level1:
-            print(link)
+            logging.info(link)
 
 # Execução
 if __name__ == "__main__":
